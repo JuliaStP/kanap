@@ -1,11 +1,12 @@
 let queryString = window.location.search;
 let urlParams = new URLSearchParams(queryString);
 let productId = urlParams.get('id');
-console.log(productId);
 
-
-let myCart = localStorage.getItem('cart') || '[]';
+// let myCartArr = [];
+let myCart = localStorage.getItem('cart', []);
 let myCartArr = JSON.parse(myCart);
+// console.log(myCart);
+// console.log(myCartArr);
 
 
 
@@ -13,14 +14,22 @@ let myCartArr = JSON.parse(myCart);
 fetch(`http://localhost:3000/api/products/${productId}`)
   .then((res) => res.json())
   .then((data) => {
+    // updateProduct(data);
     getProduct(data);
 })
   .catch((error) => console.log(error));
 
-
+  // function updateProduct(val) {
+  //   currentProduct.id = val._id;
+  //   currentProduct.color = val.color;
+  //   currentProduct.quantity = val.quantity;
+  //   currentProduct.name = val.name;
+  //   currentProduct.price = val.price;
+  //   currentProduct.description = val.description;
+  //   currentProduct.imageUrl = val.imageUrl;
+  // }
 
   
-
 
 
 
@@ -85,54 +94,99 @@ function getProduct (data) {
     const prodQuantity = document.getElementById('quantity');
     const prodColor = document.getElementById('colors');
 
-    const currentProduct = {
-      id: productId,
-      color: '',
-      quantity: 0
-    };
+    // let currentProduct = {
+    //   id: productId,
+    //   color: '',
+    //   quantity: 0,
+    //   name: '',
+    //   price: '',
+    //   description: '',
+    //   imageUrl: ''
+    // };
+    // console.log(currentProduct);
     
+    // function updateProduct(val) {
+    //   currentProduct._id = val.id;
+    //   currentProduct.color = val.color;
+    //   currentProduct.quantity = val.quantity;
+    //   currentProduct.name = val.name;
+    //   currentProduct.description = val.description;
+    //   currentProduct.imageUrl = val.imageUrl;
+    // }
+
+    // let updatedPro = updateProduct(currentProduct);
+
+    // console.log(updatedPro);
+    
+
+    let currentProduct = {
+      id: data._id,
+      color: '',
+      quantity: 0,
+      name: data.name,
+      price: data.price,
+      description: data.description,
+      imageUrl: data.imageUrl
+    };
+
+    function checkProduct() {
+      
+
+      if (currentProduct.color === '' || currentProduct.quantity === 0) {
+        alert('Please pick your color and quantity');
+        return;
+      }
+
+      let letsPush;
+      if (myCartArr.length ===0) {
+        letsPush = true;
+      }
+
+      for (let index = 0; index < myCartArr.length; index++) {
+        if(currentProduct.id === myCartArr[index].id && currentProduct.color === myCartArr[index].color) {
+          // myCartArr.remove(currentProduct);
+          myCartArr[index].quantity === ++currentProduct.quantity;
+          // myCartArr.push(currentProduct);
+          letsPush = false;
+        } 
+      }
+
+      if(letsPush = true) {
+        // localStorage.clear();
+        myCartArr.push(currentProduct);
+        addToCart()
+      }  
+    }
+ 
     function addToCart() {
-      myCartArr.push(currentProduct);
+      // let myCartArr = [];
+      // myCartArr.push(currentProduct);
       myCart = JSON.stringify(myCartArr);
       localStorage.setItem('cart', myCart);
+      
     }
+
+    prodQuantity.addEventListener('change', () => 
+    currentProduct.quantity = document.querySelector('#quantity').value,
+    console.log(currentProduct)
+    );
+  
+    prodColor.addEventListener('change', () => 
+      currentProduct.color = document.querySelector('#colors').value,
+      console.log(currentProduct)
+    );
 
     const addToCartBtn = document.getElementById('addToCart');
 
     addToCartBtn.addEventListener('click', ($event) => {
       $event.preventDefault();
-      addToCart(currentProduct);
+      // addToCart()
+      checkProduct();
       console.log(currentProduct);
     })    
-    
-    prodQuantity.addEventListener('change', () => 
-    currentProduct.quantity = document.querySelector('#quantity').value
-    )
-  
-    prodColor.addEventListener('change', () => 
-      currentProduct.color = document.querySelector('#colors').value
-    )
 };
 
 
-
-
-
-
-
-
-
-// function updateProduct(data) {
-//   currentProduct.id = data.id;
-//   currentProduct.color = data.color;
-//   currentProduct.quantity = data.quantity;
-// }
-
-
-
-
-// updateCurrentProduct(currentProduct);
-// console.log(currentProduct);
 
 
 
