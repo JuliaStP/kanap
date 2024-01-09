@@ -36,96 +36,64 @@ function showCart(myCartArr) {
 
         let btn = document.querySelectorAll(".deleteItem");
 
+        let currentProduct = {
+            _id: myCartArr[arr]._id,
+            color: myCartArr[arr].color,
+            quantity: myCartArr[arr].quantity,
+            name: myCartArr[arr].name,
+            price: myCartArr[arr].price,
+            description: myCartArr[arr].description,
+            imageUrl: myCartArr[arr].imageUrl
+          };
+
         btn.forEach(function(elem) {
             elem.addEventListener("click", function(e) {
+                e.preventDefault();
+
                 let prodCard = e.target.closest('article');
                 prodCard.remove()
         
-                let i = myCartArr.indexOf(1);
-                item = myCartArr.splice(i, 1);
-                localStorage.removeItem(item);
+                let idDel = myCartArr[arr].id;
+                let colorDel = myCartArr[arr].color
 
-                myCartArr.splice(i, 0);
+                myCartArr = myCartArr.filter( i => i.id !== idDel || i.color !== colorDel);
+
                 myCart = JSON.stringify(myCartArr);
                 localStorage.setItem('cart', myCart);
+            });
+        });
 
-                myCart = localStorage.getItem('cart') || '[]';
-                myCartArr = JSON.parse(myCart);
 
+
+          let prodQuantity = document.querySelectorAll(".itemQuantity");
+
+          prodQuantity.forEach(function(elem) {
+            elem.addEventListener("change", function(e) {
+                e.preventDefault();
+
+                
+                prodQuantity.textContent = e.target.value;
+                let updatedQuantity = e.target.value;
+
+                let modQuantity = myCartArr[arr].quantity;
+                let selectedItem = myCartArr[arr];
+                console.log(selectedItem);
+
+                //updates all products in cart
+                //how to get correct id??
+
+                const finalQuantity = myCartArr.find((i) => i.updatedQuantity !== modQuantity);
+                console.log(finalQuantity.id);
+
+                finalQuantity.quantity = updatedQuantity;
+                myCartArr[arr].quantity = updatedQuantity;
+                console.log(updatedQuantity);
+
+                myCart = JSON.stringify(myCartArr);
+                localStorage.setItem('cart', myCart);
             });
         });
     }
 }
 
 showCart(myCartArr);
-
-
-
-
-
-const cartItems = document.getElementById('cart__items');
-const prodCards = document.getElementsByClassName('cart__item');
-
-// cartItems.addEventListener('click', (e) => {
-//     let prodCard = e.target.closest('div')
-//     //get id of the product
-//     //delete from dom
-//     //delete from localStorage
-//     console.log(prodCard);
-
-// })
-
-
-
-// for (let i = 0; i < deleteBtn.length; i++) {
-//     deleteBtn[i].addEventListener('click', (e) => {
-//         e.preventDefault();
-//         const cartItems = document.getElementById('cart__items');
-//         const prodCards = document.getElementsByClassName('cart__item');
-//         console.log(prodCards);
-//         for (let i = 0; i < myCartArr.length; i++) {
-//             // let index = myCartArr.indexOf(this);
-//             myCartArr.shift(myCartArr[i]);
-        
-//             // myCartArr.splice(i,1)
-//             // myCartArr[i].remove();
-//         }
-//             // let index = myCartArr.indexOf(this);
-            
-        
-//             // myCartArr.splice(index,1)
-//             // newArr = cartItems.remove(prodCards[0]);
-
-//             // console.log(prodCards);
-
-//             // console.log(myCartArr);
-//             // myCartArr.push(newArr);
-//             // myCart = JSON.stringify(newArr);
-//             // localStorage.setItem('cart', myCart);
-//             // myCart = localStorage.getItem('cart');
-//             // myCartArr = JSON.parse(myCart);
-//     })  
-// }
-
-
-
-
-
-
-
-
-
-const prodQuantity = document.getElementById('quantity');
-const quantityText = document.getElementById('quantityText');
-
-
-prodQuantity.addEventListener('change', (e) => {  
-    // for (let i = 0; i < myCartArr.length; i++) {
-    myCartArr.shift(myCartArr[0]);
-    prodQuantity.textContent = e.target.value;
-    myCartArr[0].quantity = e.target.value
-    myCartArr.push(myCartArr[0]);
-    myCart = JSON.stringify(myCartArr);
-    localStorage.setItem('cart', myCart);
-    // }
-})

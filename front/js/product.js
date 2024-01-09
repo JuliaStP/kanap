@@ -143,9 +143,12 @@ function getProduct (data) {
       }
 
       for (let index = 0; index < myCartArr.length; index++) {
+
         if(currentProduct.id === myCartArr[index].id && currentProduct.color === myCartArr[index].color) {
+
           // myCartArr.remove(currentProduct);
           myCartArr[index].quantity === ++currentProduct.quantity;
+
           // myCartArr.push(currentProduct);
           letsPush = false;
         } 
@@ -163,6 +166,7 @@ function getProduct (data) {
       // myCartArr.push(currentProduct);
       myCart = JSON.stringify(myCartArr);
       localStorage.setItem('cart', myCart);
+      // localStorage.clear();
       
     }
 
