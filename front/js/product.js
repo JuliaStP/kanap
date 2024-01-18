@@ -5,48 +5,16 @@ let productId = urlParams.get('id');
 // let myCartArr = [];
 let myCart = localStorage.getItem('cart', []);
 let myCartArr = JSON.parse(myCart);
-// console.log(myCart);
-// console.log(myCartArr);
-
-
-
 
 fetch(`http://localhost:3000/api/products/${productId}`)
   .then((res) => res.json())
   .then((data) => {
-    // updateProduct(data);
     getProduct(data);
 })
   .catch((error) => console.log(error));
 
-  // function updateProduct(val) {
-  //   currentProduct.id = val._id;
-  //   currentProduct.color = val.color;
-  //   currentProduct.quantity = val.quantity;
-  //   currentProduct.name = val.name;
-  //   currentProduct.price = val.price;
-  //   currentProduct.description = val.description;
-  //   currentProduct.imageUrl = val.imageUrl;
-  // }
-
-  
-
-
-
 function getProduct (data) {
   const productsItem = document.getElementsByClassName("item")[0];
-
-  // let colors = document.querySelector("#colors")[0];
-  // for (let color of colors) {
-  //   let code = 
-  //   `<option value="${color}">  </option>`;
-  //   colors.insertAdjacentHTML("beforeend", code);
-  // };
-
-  //var options 
-  //inject options below. 
-
-
   
   const blockOfCode = `
     <article>
@@ -87,98 +55,72 @@ function getProduct (data) {
     </div>
             `;
 
-
-
     productsItem.insertAdjacentHTML("beforeend", blockOfCode);  
     
-    const prodQuantity = document.getElementById('quantity');
-    const prodColor = document.getElementById('colors');
-
-    // let currentProduct = {
-    //   id: productId,
-    //   color: '',
-    //   quantity: 0,
-    //   name: '',
-    //   price: '',
-    //   description: '',
-    //   imageUrl: ''
-    // };
-    // console.log(currentProduct);
-    
-    // function updateProduct(val) {
-    //   currentProduct._id = val.id;
-    //   currentProduct.color = val.color;
-    //   currentProduct.quantity = val.quantity;
-    //   currentProduct.name = val.name;
-    //   currentProduct.description = val.description;
-    //   currentProduct.imageUrl = val.imageUrl;
-    // }
-
-    // let updatedPro = updateProduct(currentProduct);
-
-    // console.log(updatedPro);
-    
+    const prodQuantity = document.querySelector('#quantity');
+    const prodColor = document.querySelector('#colors');
+    let updatedColor = prodColor.value;
+    let quant = prodQuantity.value;
 
     let currentProduct = {
       id: data._id,
       color: '',
-      quantity: 0,
+      quantity: Number(quant),
       name: data.name,
       price: data.price,
       description: data.description,
       imageUrl: data.imageUrl
     };
 
-    function checkProduct() {
-      
+    prodQuantity.addEventListener('change', () => 
+    currentProduct.quantity = document.querySelector('#quantity').value
+    );
+  
+    prodColor.addEventListener('change', () => 
+      currentProduct.color = document.querySelector('#colors').value
+    );
 
+    function checkProduct() {
+      myCart = localStorage.getItem('cart', []);
+      myCartArr = JSON.parse(myCart);
+      
       if (currentProduct.color === '' || currentProduct.quantity === 0) {
         alert('Please pick your color and quantity');
         return;
       }
 
-      let letsPush;
-      if (myCartArr.length ===0) {
-        letsPush = true;
-      }
-
-      for (let index = 0; index < myCartArr.length; index++) {
-
-        if(currentProduct.id === myCartArr[index].id && currentProduct.color === myCartArr[index].color) {
-
-          // myCartArr.remove(currentProduct);
-          myCartArr[index].quantity === ++currentProduct.quantity;
-
-          // myCartArr.push(currentProduct);
-          letsPush = false;
-        } 
-      }
-
-      if(letsPush = true) {
-        // localStorage.clear();
+      if(myCartArr) {
+        const checkItem = myCartArr.find( (i) => {
+          const idMatch = i.id === productId
+          const colorMatch = i.color === currentProduct.color
+          console.log('idMatch', idMatch);
+          console.log('colorMatch', colorMatch)
+           return idMatch && colorMatch});
+        console.log(checkItem); 
+        if(checkItem) {
+          let updatedQuantity = parseInt(currentProduct.quantity) + parseInt(checkItem.quantity);
+          console.log(updatedQuantity);
+          checkItem.quantity = updatedQuantity;
+          myCart = JSON.stringify(myCartArr);
+          localStorage.setItem('cart', myCart);
+        } else {
+          myCartArr.push(currentProduct);
+          addToCart()
+        }
+      } else {
+        myCartArr = [];
         myCartArr.push(currentProduct);
         addToCart()
-      }  
+      }
     }
  
     function addToCart() {
       // let myCartArr = [];
-      // myCartArr.push(currentProduct);
       myCart = JSON.stringify(myCartArr);
       localStorage.setItem('cart', myCart);
       // localStorage.clear();
       
     }
-
-    prodQuantity.addEventListener('change', () => 
-    currentProduct.quantity = document.querySelector('#quantity').value,
-    console.log(currentProduct)
-    );
-  
-    prodColor.addEventListener('change', () => 
-      currentProduct.color = document.querySelector('#colors').value,
-      console.log(currentProduct)
-    );
 
     const addToCartBtn = document.getElementById('addToCart');
 

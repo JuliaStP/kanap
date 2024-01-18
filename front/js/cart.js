@@ -17,7 +17,7 @@ function showCart(myCartArr) {
           <div class="cart__item__content__description">
             <h2>${myCartArr[arr].name}</h2>
             <p>${myCartArr[arr].color}</p>
-            <p>$ ${myCartArr[arr].price}</p>
+            <p class='itemPrice'>$ ${myCartArr[arr].price}</p>
           </div>
           <div class="cart__item__content__settings">
             <div class="cart__item__content__settings__quantity">
@@ -34,17 +34,29 @@ function showCart(myCartArr) {
 
         cartItems.insertAdjacentHTML("beforeend", blockOfCode);
 
-        let btn = document.querySelectorAll(".deleteItem");
+        function getTotals() {
 
-        let currentProduct = {
-            _id: myCartArr[arr]._id,
-            color: myCartArr[arr].color,
-            quantity: myCartArr[arr].quantity,
-            name: myCartArr[arr].name,
-            price: myCartArr[arr].price,
-            description: myCartArr[arr].description,
-            imageUrl: myCartArr[arr].imageUrl
-          };
+            let itemQuantity = document.querySelectorAll('.itemQuantity')
+            let total = document.querySelector('#totalQuantity');
+            let totalQuantity = 0;
+        
+            for (let i = 0; i < itemQuantity.length; i++) {
+                totalQuantity = totalQuantity + itemQuantity[i].valueAsNumber;
+            }
+            total.innerHTML = totalQuantity;
+        
+            let itemPrice = document.querySelectorAll('.itemPrice');
+            let totalP = document.querySelector('#totalPrice');
+            let totalPrice = 0;
+
+            for (let i = 0; i < itemPrice.length; i++) {
+                totalPrice = totalPrice + (itemQuantity[i].valueAsNumber * myCartArr[i].price);
+            };
+            totalP.innerHTML = totalPrice;   
+        }
+        getTotals();
+
+        let btn = document.querySelectorAll(".deleteItem");
 
         btn.forEach(function(elem) {
             elem.addEventListener("click", function(e) {
@@ -54,9 +66,10 @@ function showCart(myCartArr) {
                 prodCard.remove()
         
                 let idDel = myCartArr[arr].id;
+                console.log(idDel);
                 let colorDel = myCartArr[arr].color
 
-                myCartArr = myCartArr.filter( i => i.id !== idDel || i.color !== colorDel);
+                myCartArr = myCartArr.filter( (i) => i.id !== idDel || i.color !== colorDel);
 
                 myCart = JSON.stringify(myCartArr);
                 localStorage.setItem('cart', myCart);
@@ -65,6 +78,12 @@ function showCart(myCartArr) {
 
 
 
+        // function modQuantity() {
+        //     let prodQuantity = document.querySelectorAll(".itemQuantity"); 
+
+        //     for( let i=0; i<prodQuantity.length; i++) {}
+        // }
+        
           let prodQuantity = document.querySelectorAll(".itemQuantity");
 
           prodQuantity.forEach(function(elem) {
@@ -74,19 +93,22 @@ function showCart(myCartArr) {
                 
                 prodQuantity.textContent = e.target.value;
                 let updatedQuantity = e.target.value;
+                console.log(updatedQuantity);
+
 
                 let modQuantity = myCartArr[arr].quantity;
                 let selectedItem = myCartArr[arr];
                 console.log(selectedItem);
+                console.log(modQuantity );
 
                 //updates all products in cart
                 //how to get correct id??
 
-                const finalQuantity = myCartArr.find((i) => i.updatedQuantity !== modQuantity);
-                console.log(finalQuantity.id);
+                // const finalQuantity = myCartArr.find((i) => i.updatedQuantity !== modQuantity);
+                // console.log(selectedItem.id);
 
-                finalQuantity.quantity = updatedQuantity;
-                myCartArr[arr].quantity = updatedQuantity;
+                selectedItem.quantity = updatedQuantity;
+                // myCartArr[arr].quantity = updatedQuantity;
                 console.log(updatedQuantity);
 
                 myCart = JSON.stringify(myCartArr);
@@ -97,3 +119,5 @@ function showCart(myCartArr) {
 }
 
 showCart(myCartArr);
+
+
