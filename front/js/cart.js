@@ -1,14 +1,12 @@
-let myCart = localStorage.getItem('cart') || '[]';
+let myCart = localStorage.getItem("cart") || "[]";
 let myCartArr = JSON.parse(myCart);
-console.log(myCartArr)
-
+console.log(myCartArr);
 
 function showCart(myCartArr) {
-    const cartItems = document.getElementById('cart__items');
+  const cartItems = document.getElementById("cart__items");
 
-    for (let arr=0; arr < myCartArr.length; arr++) {
-
-        const blockOfCode = `
+  for (let arr = 0; arr < myCartArr.length; arr++) {
+    const blockOfCode = `
         <article class="cart__item" id="${myCartArr[arr]._id}" data-id="${myCartArr[arr]._id}" data-color="${myCartArr[arr].color}">
         <div class="cart__item__img">
           <img src="${myCartArr[arr].imageUrl}" alt="${myCartArr[arr].altText}">
@@ -32,92 +30,199 @@ function showCart(myCartArr) {
       </article>
         `;
 
-        cartItems.insertAdjacentHTML("beforeend", blockOfCode);
+    cartItems.insertAdjacentHTML("beforeend", blockOfCode);
 
-        function getTotals() {
+    function getTotals() {
+      let itemQuantity = document.querySelectorAll(".itemQuantity");
+      let total = document.querySelector("#totalQuantity");
+      let totalQuantity = 0;
 
-            let itemQuantity = document.querySelectorAll('.itemQuantity')
-            let total = document.querySelector('#totalQuantity');
-            let totalQuantity = 0;
-        
-            for (let i = 0; i < itemQuantity.length; i++) {
-                totalQuantity = totalQuantity + itemQuantity[i].valueAsNumber;
-            }
-            total.innerHTML = totalQuantity;
-        
-            let itemPrice = document.querySelectorAll('.itemPrice');
-            let totalP = document.querySelector('#totalPrice');
-            let totalPrice = 0;
+      for (let i = 0; i < itemQuantity.length; i++) {
+        totalQuantity = totalQuantity + itemQuantity[i].valueAsNumber;
+      }
+      total.innerHTML = totalQuantity;
 
-            for (let i = 0; i < itemPrice.length; i++) {
-                totalPrice = totalPrice + (itemQuantity[i].valueAsNumber * myCartArr[i].price);
-            };
-            totalP.innerHTML = totalPrice;   
-        }
-        getTotals();
+      let itemPrice = document.querySelectorAll(".itemPrice");
+      let totalP = document.querySelector("#totalPrice");
+      let totalPrice = 0;
 
-        let btn = document.querySelectorAll(".deleteItem");
-
-        btn.forEach(function(elem) {
-            elem.addEventListener("click", function(e) {
-                e.preventDefault();
-
-                let prodCard = e.target.closest('article');
-                prodCard.remove()
-        
-                let idDel = myCartArr[arr].id;
-                console.log(idDel);
-                let colorDel = myCartArr[arr].color
-
-                myCartArr = myCartArr.filter( (i) => i.id !== idDel || i.color !== colorDel);
-
-                myCart = JSON.stringify(myCartArr);
-                localStorage.setItem('cart', myCart);
-            });
-        });
-
-
-
-        // function modQuantity() {
-        //     let prodQuantity = document.querySelectorAll(".itemQuantity"); 
-
-        //     for( let i=0; i<prodQuantity.length; i++) {}
-        // }
-        
-          let prodQuantity = document.querySelectorAll(".itemQuantity");
-
-          prodQuantity.forEach(function(elem) {
-            elem.addEventListener("change", function(e) {
-                e.preventDefault();
-
-                
-                prodQuantity.textContent = e.target.value;
-                let updatedQuantity = e.target.value;
-                console.log(updatedQuantity);
-
-
-                let modQuantity = myCartArr[arr].quantity;
-                let selectedItem = myCartArr[arr];
-                console.log(selectedItem);
-                console.log(modQuantity );
-
-                //updates all products in cart
-                //how to get correct id??
-
-                // const finalQuantity = myCartArr.find((i) => i.updatedQuantity !== modQuantity);
-                // console.log(selectedItem.id);
-
-                selectedItem.quantity = updatedQuantity;
-                // myCartArr[arr].quantity = updatedQuantity;
-                console.log(updatedQuantity);
-
-                myCart = JSON.stringify(myCartArr);
-                localStorage.setItem('cart', myCart);
-            });
-        });
+      for (let i = 0; i < itemPrice.length; i++) {
+        totalPrice =
+          totalPrice + itemQuantity[i].valueAsNumber * myCartArr[i].price;
+      }
+      totalP.innerHTML = totalPrice;
     }
-}
+    getTotals();
 
+    let btn = document.querySelectorAll(".deleteItem");
+
+    btn.forEach(function (elem) {
+      elem.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        let prodCard = e.target.closest("article");
+        prodCard.remove();
+
+        let idDel = myCartArr[arr].id;
+        console.log(idDel);
+        let colorDel = myCartArr[arr].color;
+
+        myCartArr = myCartArr.filter(
+          (i) => i.id !== idDel || i.color !== colorDel
+        );
+
+        myCart = JSON.stringify(myCartArr);
+        localStorage.setItem("cart", myCart);
+      });
+    });
+
+    function modQuantity() {
+      let prodQuantity = document.querySelectorAll(".itemQuantity");
+
+      for (let arr = 0; arr < prodQuantity.length; arr++) {
+        prodQuantity[arr].addEventListener("change", (e) => {
+          e.preventDefault();
+
+          prodQuantity.textContent = e.target.value;
+          let updatedQuantity = e.target.value;
+          console.log(updatedQuantity);
+
+          let modQuantity = myCartArr[arr].quantity;
+          console.log(modQuantity);
+
+          const finalQuantity = myCartArr.find((i) => {
+            const quantMatch = updatedQuantity !== modQuantity;
+            console.log('quantMatch', quantMatch);
+            return quantMatch;
+          });
+
+          if(finalQuantity) {
+            // finalQuantity.quantity = updatedQuantity;
+            myCartArr[arr].quantity = updatedQuantity;;
+            console.log(updatedQuantity);
+  
+            myCart = JSON.stringify(myCartArr);
+            localStorage.setItem("cart", myCart);
+          }
+        });
+      }
+    }
+  }
+  modQuantity();
+}
 showCart(myCartArr);
 
+let form = document.querySelector(".cart__order__form");
+let orderBtn = document.querySelector("#order");
 
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  validForm();
+  // postForm();
+});
+
+function validForm() {
+  let regExp = new RegExp("^[A-Za-z\s]+$");
+  let emailRegExp = new RegExp("^[^\s@]+@[^\s@]+\.[^\s@]+$");
+  let addressRegExp = new RegExp("^[a-zA-Z0-9\s,'-]*$");
+
+
+  function isValidName(name) {
+    return regExp.test(name);
+}
+
+let firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
+if(isValidName(firstName.value)) {
+  firstNameErrorMsg.innerHTML = '';
+} else {
+  firstNameErrorMsg.innerHTML = 'Please input correct first name.';
+}
+
+let lastNameErrorMsg = document.querySelector('#lastNameErrorMsg');
+if(isValidName(lastName.value)) {
+  lastNameErrorMsg.innerHTML = '';
+} else {
+  lastNameErrorMsg.innerHTML = 'Please input correct last name.';
+}
+
+let emailErrorMsg = document.querySelector('#emailErrorMsg');
+function isValidEmail(email) {
+    return emailRegExp.test(email);
+}
+if(isValidEmail(email.value)) {
+  emailErrorMsg.innerHTML = '';
+} else {
+  emailErrorMsg.innerHTML = 'Please input correct email.';
+}
+
+let addressErrorMsg = document.querySelector('#addressErrorMsg');
+function isValidAddress(address) {
+  return addressRegExp.test(address);
+}
+if(isValidAddress(address.value)) {
+  addressErrorMsg.innerHTML = '';
+} else {
+  addressErrorMsg.innerHTML = 'Please input correct address.';
+}
+
+
+form.firstName.addEventListener("change", () => {
+  isValidName();
+});
+
+form.lastName.addEventListener("change", () => {
+  isValidName();
+});
+
+  form.email.addEventListener("change", () => {
+    isValidEmail();
+  });
+
+  form.address.addEventListener("change", () => {
+    isValidAddress();
+  });
+}
+
+function postForm() {
+
+  let firstName = document.querySelector('#firstName');
+  let lastName = document.querySelector('#lastName');
+  let address = document.querySelector('#address');
+  let city = document.querySelector('#city');
+  let email = document.querySelector('#email');
+
+  let productIds = [];
+  for(let i = 0; i < myCartArr.length; i++) {
+    productIds.push(myCartArr[i].id);
+  }
+  console.log(productIds);
+
+  let order = {
+    contact : {
+      firstName: firstName.value,
+      lastName: lastName.value,
+      address: address.value,
+      city: city.value,
+      email: email.value
+    },
+    products : productIds,
+  }
+
+
+  fetch("http://localhost:3000/api/products/order", {
+    method: 'POST',
+    body: JSON.stringify({
+      order
+    }),
+    headers: {
+      'Accept': 'applicaton/json',
+      'Content-type': 'application/json; charset=UTF-8'
+    }
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      localStorage.setItem('orderNumber', data.orderNumber);
+    })
+    .catch((error) => console.log(error));
+}
