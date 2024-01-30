@@ -92,15 +92,15 @@ function showCart(myCartArr) {
 
           const finalQuantity = myCartArr.find((i) => {
             const quantMatch = updatedQuantity !== modQuantity;
-            console.log('quantMatch', quantMatch);
+            console.log("quantMatch", quantMatch);
             return quantMatch;
           });
 
-          if(finalQuantity) {
+          if (finalQuantity) {
             // finalQuantity.quantity = updatedQuantity;
-            myCartArr[arr].quantity = updatedQuantity;;
+            myCartArr[arr].quantity = updatedQuantity;
             console.log(updatedQuantity);
-  
+
             myCart = JSON.stringify(myCartArr);
             localStorage.setItem("cart", myCart);
           }
@@ -117,62 +117,68 @@ let orderBtn = document.querySelector("#order");
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
+  console.log(form);
   validForm();
-  // postForm();
+  postForm();
 });
 
 function validForm() {
-  let regExp = new RegExp("^[A-Za-z\s]+$");
-  let emailRegExp = new RegExp("^[^\s@]+@[^\s@]+\.[^\s@]+$");
-  let addressRegExp = new RegExp("^[a-zA-Z0-9\s,'-]*$");
+  let regExp = new RegExp("^[A-Za-zs]+$");
+  let emailRegExp = new RegExp("^[^s@]+@[^s@]+.[^s@]+$");
+  let addressRegExp = new RegExp("^[a-zA-Z0-9s,'-]*$");
 
+  function isValidString(string) {
+    return regExp.test(string);
+  }
 
-  function isValidName(name) {
-    return regExp.test(name);
-}
+  let firstNameErrorMsg = document.querySelector("#firstNameErrorMsg");
+  if (isValidString(firstName.value)) {
+    firstNameErrorMsg.innerHTML = "";
+  } else {
+    firstNameErrorMsg.innerHTML = "Please input correct first name.";
+  }
 
-let firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
-if(isValidName(firstName.value)) {
-  firstNameErrorMsg.innerHTML = '';
-} else {
-  firstNameErrorMsg.innerHTML = 'Please input correct first name.';
-}
+  let lastNameErrorMsg = document.querySelector("#lastNameErrorMsg");
+  if (isValidString(lastName.value)) {
+    lastNameErrorMsg.innerHTML = "";
+  } else {
+    lastNameErrorMsg.innerHTML = "Please input correct last name.";
+  }
 
-let lastNameErrorMsg = document.querySelector('#lastNameErrorMsg');
-if(isValidName(lastName.value)) {
-  lastNameErrorMsg.innerHTML = '';
-} else {
-  lastNameErrorMsg.innerHTML = 'Please input correct last name.';
-}
+  let cityErrorMsg = document.querySelector("#cityErrorMsg");
+  if (isValidString(city.value)) {
+    cityErrorMsg.innerHTML = "";
+  } else {
+    cityErrorMsg.innerHTML = "Please input correct city.";
+  }
 
-let emailErrorMsg = document.querySelector('#emailErrorMsg');
-function isValidEmail(email) {
+  let emailErrorMsg = document.querySelector("#emailErrorMsg");
+  function isValidEmail(email) {
     return emailRegExp.test(email);
-}
-if(isValidEmail(email.value)) {
-  emailErrorMsg.innerHTML = '';
-} else {
-  emailErrorMsg.innerHTML = 'Please input correct email.';
-}
+  }
+  if (isValidEmail(email.value)) {
+    emailErrorMsg.innerHTML = "";
+  } else {
+    emailErrorMsg.innerHTML = "Please input correct email.";
+  }
 
-let addressErrorMsg = document.querySelector('#addressErrorMsg');
-function isValidAddress(address) {
-  return addressRegExp.test(address);
-}
-if(isValidAddress(address.value)) {
-  addressErrorMsg.innerHTML = '';
-} else {
-  addressErrorMsg.innerHTML = 'Please input correct address.';
-}
+  let addressErrorMsg = document.querySelector("#addressErrorMsg");
+  function isValidAddress(address) {
+    return addressRegExp.test(address);
+  }
+  if (isValidAddress(address.value)) {
+    addressErrorMsg.innerHTML = "";
+  } else {
+    addressErrorMsg.innerHTML = "Please input correct address.";
+  }
 
+  form.firstName.addEventListener("change", () => {
+    isValidName();
+  });
 
-form.firstName.addEventListener("change", () => {
-  isValidName();
-});
-
-form.lastName.addEventListener("change", () => {
-  isValidName();
-});
+  form.lastName.addEventListener("change", () => {
+    isValidName();
+  });
 
   form.email.addEventListener("change", () => {
     isValidEmail();
@@ -184,45 +190,48 @@ form.lastName.addEventListener("change", () => {
 }
 
 function postForm() {
-
-  let firstName = document.querySelector('#firstName');
-  let lastName = document.querySelector('#lastName');
-  let address = document.querySelector('#address');
-  let city = document.querySelector('#city');
-  let email = document.querySelector('#email');
+  let firstName = document.querySelector("#firstName");
+  let lastName = document.querySelector("#lastName");
+  let address = document.querySelector("#address");
+  let city = document.querySelector("#city");
+  let email = document.querySelector("#email");
 
   let productIds = [];
-  for(let i = 0; i < myCartArr.length; i++) {
+  for (let i = 0; i < myCartArr.length; i++) {
     productIds.push(myCartArr[i].id);
   }
   console.log(productIds);
 
   let order = {
-    contact : {
+    contact: {
       firstName: firstName.value,
       lastName: lastName.value,
       address: address.value,
       city: city.value,
-      email: email.value
+      email: email.value,
     },
-    products : productIds,
+    products: productIds,
+  };
+
+const orders = {
+  method: "POST",
+  body: JSON.stringify(
+    order
+  ),
+  headers: {
+    Accept: "applicaton/json",
+    "Content-type": "application/json; charset=UTF-8",
   }
+};
 
-
-  fetch("http://localhost:3000/api/products/order", {
-    method: 'POST',
-    body: JSON.stringify({
-      order
-    }),
-    headers: {
-      'Accept': 'applicaton/json',
-      'Content-type': 'application/json; charset=UTF-8'
-    }
-  })
+  fetch("http://localhost:3000/api/products/order", orders)
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
-      localStorage.setItem('orderNumber', data.orderNumber);
+      let parsedData = JSON.stringify(data);
+      let orderId = data.orderId;
+      // localStorage.clear();
+      localStorage.setItem("orders", parsedData);
+      document.location.href = "confirmation.html"
     })
     .catch((error) => console.log(error));
 }
