@@ -213,25 +213,22 @@ function postForm() {
     products: productIds,
   };
 
-const orders = {
-  method: "POST",
-  body: JSON.stringify(
-    order
-  ),
-  headers: {
-    Accept: "applicaton/json",
-    "Content-type": "application/json; charset=UTF-8",
-  }
-};
+  const orders = {
+    method: "POST",
+    body: JSON.stringify(order),
+    headers: {
+      Accept: "applicaton/json",
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  };
 
   fetch("http://localhost:3000/api/products/order", orders)
     .then((res) => res.json())
     .then((data) => {
       let parsedData = JSON.stringify(data);
-      let orderId = data.orderId;
       // localStorage.clear();
       localStorage.setItem("orders", parsedData);
-      document.location.href = "confirmation.html"
+      document.location.href = "confirmation.html";
     })
     .catch((error) => console.log(error));
 }
