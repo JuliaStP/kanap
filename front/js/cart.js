@@ -97,7 +97,6 @@ function showCart(myCartArr) {
           });
 
           if (finalQuantity) {
-            // finalQuantity.quantity = updatedQuantity;
             myCartArr[arr].quantity = updatedQuantity;
             console.log(updatedQuantity);
 

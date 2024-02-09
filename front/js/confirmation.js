@@ -9,7 +9,8 @@
 
 let queryString = window.location.search;
 let urlParams = new URLSearchParams(queryString);
-let orderId = urlParams.get('orderId');
+let orderId = urlParams.get("orderId");
 
-let id = document.querySelector('#orderId');
+let id = document.querySelector("#orderId");
 id.textContent = orderId;
+localStorage.clear();
