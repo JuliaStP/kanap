@@ -5,7 +5,7 @@ let productId = urlParams.get("id");
 let myCart = localStorage.getItem("cart", []);
 let myCartArr = JSON.parse(myCart);
 
-fetch(`http://localhost:3000/api/products/${productId}`)
+fetch(`https://kanap-backend-zhk3.onrender.com/api/products/${productId}`)
   .then((res) => res.json())
   .then((data) => {
     getProduct(data);

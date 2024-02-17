@@ -221,7 +221,7 @@ function postForm() {
     },
   };
 
-  fetch("http://localhost:3000/api/products/order", orders)
+  fetch("https://kanap-backend-zhk3.onrender.com/api/products/order", orders)
     .then((res) => res.json())
     .then((data) => {
       // LocalStorage version:

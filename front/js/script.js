@@ -1,5 +1,5 @@
 const products = document.querySelector("#items");
-fetch("http://localhost:3000/api/products")
+fetch("https://kanap-backend-zhk3.onrender.com/api/products")
   .then((res) => res.json())
   .then((data) => product(data))
   .catch((error) => console.log(error));
