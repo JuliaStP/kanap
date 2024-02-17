@@ -225,12 +225,12 @@ function postForm() {
     .then((res) => res.json())
     .then((data) => {
       // LocalStorage version:
-      // let parsedData = JSON.stringify(data);
+      let parsedData = JSON.stringify(data);
       // localStorage.clear();
-      // localStorage.setItem("orders", parsedData);
-      // document.location.href = "confirmation.html";
-      let gotOrderId = data.orderId;
-      window.location.href = `/front/html/confirmation.html?orderId=${gotOrderId}`;
+      localStorage.setItem("orders", parsedData);
+      document.location.href = "confirmation.html";
+      // let gotOrderId = data.orderId;
+      // window.location.href = `/front/html/confirmation.html?orderId=${gotOrderId}`;
     })
     .catch((error) => console.log(error));
 }
