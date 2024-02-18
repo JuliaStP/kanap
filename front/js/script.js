@@ -7,7 +7,7 @@ fetch("https://kanap-backend-zhk3.onrender.com/api/products")
 const product = function (data) {
   for (let i in data) {
     const blockOfCode = `
-            <a href="product.html?id=${data[i]._id}"> 
+            <a href="front/html/product.html?id=${data[i]._id}"> 
               <article>
                 <img src="${data[i].imageUrl}" alt="${data[i].altTxt}">
                 <h3 class="productName">${data[i].name}"</h3>
