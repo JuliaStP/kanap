@@ -116,9 +116,10 @@ let orderBtn = document.querySelector("#order");
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  console.log(form);
   validForm();
-  postForm();
+  if(!firstNameErrorMsg.innerHTML && !lastNameErrorMsg.innerHTML && !cityErrorMsg.innerHTML && !emailErrorMsg.innerHTML && !addressErrorMsg.innerHTML) {
+    postForm();
+  }
 });
 
 function validForm() {
@@ -172,11 +173,15 @@ function validForm() {
   }
 
   form.firstName.addEventListener("change", () => {
-    isValidName();
+    isValidString();
   });
 
   form.lastName.addEventListener("change", () => {
-    isValidName();
+    isValidString();
+  });
+
+  form.city.addEventListener("change", () => {
+    isValidString();
   });
 
   form.email.addEventListener("change", () => {
